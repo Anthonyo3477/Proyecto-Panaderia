@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const productoController = require('../../db/controllers/productoController');
 
-// Middleware para parsear datos (formularios y JSON)
+// Middleware para parsear datos
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
@@ -12,6 +12,33 @@ router.get('/nuevo', (req, res) => {
         title: 'Registrar Nuevo Producto',
         categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
     });
+});
+
+// Procesar creación de producto (POST)
+router.post('/insert', async (req, res) => {
+    try {
+        const { nombre, clasificacion, descripcion } = req.body;
+
+        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim()) {
+            return res.status(400).render('nuevo-producto', {
+                error: 'Todos los campos son obligatorios',
+                valores: req.body,
+                categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+            });
+        }
+
+        await productoController.insertProducto({ nombre, clasificacion, descripcion });
+
+        // Redirige a la página /panaderia después de agregar el producto
+        res.redirect('/panaderia');
+    } catch (error) {
+        console.error('Error al crear producto:', error);
+        res.status(500).render('nuevo-producto', {
+            error: 'Error al guardar el producto',
+            valores: req.body,
+            categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+        });
+    }
 });
 
 // Mostrar todos los productos clasificados como "Pan" (Panadería)
@@ -45,31 +72,6 @@ router.get('/:id', async (req, res) => {
     } catch (error) {
         console.error('Error al obtener producto:', error);
         res.status(500).render('error', { message: 'Error al cargar el producto' });
-    }
-});
-
-// Procesar creación de producto
-router.post('/insert', async (req, res) => {
-    try {
-        const { nombre, clasificacion, descripcion } = req.body;
-
-        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim()) {
-            return res.status(400).render('nuevo-producto', {
-                error: 'Todos los campos son obligatorios',
-                valores: req.body,
-                categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
-            });
-        }
-
-        await productoController.insertProducto({ nombre, clasificacion, descripcion });
-        res.redirect('/Carro');
-    } catch (error) {
-        console.error('Error al crear producto:', error);
-        res.status(500).render('nuevo-producto', {
-            error: 'Error al guardar el producto',
-            valores: req.body,
-            categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
-        });
     }
 });
 
@@ -131,7 +133,7 @@ router.post('/actualizar/:id', async (req, res) => {
 router.post('/eliminar/:id', async (req, res) => {
     try {
         await productoController.deleteProducto(req.params.id);
-        res.redirect('/Panaderia'); // 👈 Redirige correctamente a la vista con productos actualizados
+        res.redirect('/panaderia');
     } catch (error) {
         console.error('Error al eliminar producto:', error);
         res.status(500).render('error', { message: 'Error al eliminar el producto' });

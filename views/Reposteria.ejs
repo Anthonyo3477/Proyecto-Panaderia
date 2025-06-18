@@ -43,37 +43,38 @@
 
         <!-- Tabla de productos -->
         <div class="table-responsive mt-4">
-            <table class="table table-striped table-bordered align-middle">
-                <thead class="table-dark">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light text-center">
                     <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Nombre</th>
-                        <th scope="col">Descripción</th>
-                        <th scope="col">Acciones</th>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Clasificación</th>
+                        <th>Descripción</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (productos && productos.length > 0) { %>
-                        <% productos.forEach((producto, index) => { %>
+                    <% if (productos.length> 0) { %>
+                        <% productos.forEach(producto=> { %>
                             <tr>
-                                <th scope="row"><%= index + 1 %></th>
-                                <td><%= producto.nombre %></td>
-                                <td><%= producto.descripcion %></td>
+                                <td class="text-center">
+                                    <%= producto.id %>
+                                </td>
                                 <td>
-                                    <a href="/Reposteria/<%= producto.id %>" class="btn btn-sm btn-info">Ver</a>
-                                    <a href="/Reposteria/editar/<%= producto.id %>" class="btn btn-sm btn-warning">Editar</a>
-                                    <form action="/Reposteria/eliminar/<%= producto.id %>" method="POST" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('¿Estás seguro de eliminar este producto?')">Eliminar</button>
-                                    </form>
+                                    <%= producto.nombre %>
+                                </td>
+                                <td class="text-center">
+                                    <%= producto.clasificacion %>
+                                </td>
+                                <td>
+                                    <%= producto.descripcion %>
                                 </td>
                             </tr>
-                        <% }); %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="4" class="text-center">No hay productos de repostería disponibles.</td>
-                        </tr>
-                    <% } %>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="4" class="text-center">No hay productos disponibles por ahora.</td>
+                                    </tr>
+                                    <% } %>
                 </tbody>
             </table>
         </div>

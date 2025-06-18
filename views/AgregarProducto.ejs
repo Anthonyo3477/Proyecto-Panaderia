@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="/css/Index.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" />
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-warning shadow-sm">
         <div class="container">
@@ -28,6 +29,7 @@
             </ul>
         </div>
     </nav>
+
     <main class="container my-5">
         <div class="card shadow-lg border-0">
             <div class="card-header bg-brown text-center">
@@ -36,8 +38,8 @@
                 </h2>
             </div>
             <div class="card-body">
-                <!-- Cambios principales en el formulario -->
-                <form action="/producto/insert" method="POST">
+                <!-- Ruta corregida aquí -->
+                <form action="/Panaderia/insert" method="POST">
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="nombre" class="form-label text-brown">Nombre del producto</label>
@@ -45,7 +47,6 @@
                                 placeholder="Ej: Pan Amasado" required />
                         </div>
                         <div class="col-md-6">
-                            <!-- Cambiado de 'tipo' a 'clasificacion' para coincidir con el backend -->
                             <label for="clasificacion" class="form-label text-brown">Clasificación</label>
                             <select class="form-select" id="clasificacion" name="clasificacion" required>
                                 <option value="">Seleccione una categoría</option>
@@ -61,21 +62,23 @@
                         <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
                             placeholder="Describe el producto..." required></textarea>
                     </div>
-                    <!-- Mensaje de error (opcional) -->
-                    <% if (typeof error !=='undefined' ) { %>
+
+                    <% if (typeof error !== 'undefined') { %>
                         <div class="alert alert-danger mb-3">
                             <%= error %>
                         </div>
-                        <% } %>
-                            <div class="text-center mt-4">
-                                <button type="submit" class="btn btn-panaderia btn-lg">
-                                    <i class="bi bi-check-circle-fill me-2"></i>Guardar Producto
-                                </button>
-                            </div>
+                    <% } %>
+
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-panaderia btn-lg">
+                            <i class="bi bi-check-circle-fill me-2"></i>Guardar Producto
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </main>
+
     <footer class="bg-brown text-center text-dark mt-5 py-4">
         <div class="container">
             <p class="mb-1">
@@ -84,6 +87,7 @@
             <small>Contacto: contacto@donjuanitoreposteria.cl | Tel: +56 9 84591247</small>
         </div>
     </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
