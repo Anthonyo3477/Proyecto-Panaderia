@@ -1,0 +1,148 @@
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #fffaf1;
+    color: #333;
+    margin: 0;
+    padding-top: 70px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Colores personalizados */
+.text-brown {
+    color: #5e3200 !important;
+}
+
+.bg-brown {
+    background-color: #f8e5b5 !important;
+}
+
+/* Títulos */
+h1, h2, h3 {
+    color: #5e3200;
+}
+
+/* Navbar */
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1030;
+    background-color: #f7b733 !important;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: black !important;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+    color: #333 !important;
+    transition: color 0.3s ease-in-out;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #5e3200 !important;
+}
+
+
+/* Contenedor principal */
+main.container {
+    max-width: 1200px;
+    flex: 1;
+}
+
+/* Textos */
+p {
+    font-size: 1.1rem;
+    color: #666;
+}
+
+/* Tarjetas */
+.row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.col-md-4 {
+    flex: 1;
+    max-width: 30%;
+    min-width: 250px;
+}
+
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    background-color: #fff;
+    border: none;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+    border-radius: 10px 10px 0 0;
+}
+
+.card-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.card-text {
+    color: #555;
+}
+
+/* Botones */
+.btn-primary {
+    background-color: #d9534f;
+    border-color: #d9534f;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #c9302c;
+    border-color: #ac2925;
+}
+
+.btn-panaderia {
+    background-color: #f7b733;
+    color: white;
+    border: none;
+}
+
+.btn-panaderia:hover {
+    background-color: #e69500;
+    color: white;
+}
+
+/* Footer */
+footer {
+  background-color: #5e3200;
+  color: white;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.95rem;
+  border-top: 1px solid #ddd;
+  margin-top: auto;
+}

@@ -1,0 +1,84 @@
+/* Colores personalizados */
+.text-brown {
+  color: #5e3200 !important;
+}
+
+.bg-brown {
+  background-color: #f8e5b5 !important;
+}
+
+/* Body */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #fffaf1;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* El contenido principal se expande para empujar el footer hacia abajo */
+main {
+  flex: 1;
+}
+
+/* Títulos */
+h1,
+h2,
+h3 {
+  color: #5e3200;
+}
+
+/* Navbar */
+.navbar-brand {
+  font-size: 1.5rem;
+}
+
+.navbar-nav .nav-link {
+  font-weight: 500;
+}
+
+/* Footer */
+footer {
+  background-color: #5e3200;
+  color: white;
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.95rem;
+  border-top: 1px solid #ddd;
+  margin-top: auto;
+}
+
+/* Botones personalizados */
+.btn-panaderia {
+  background-color: #f7b733;
+  color: white;
+  border: none;
+}
+
+.btn-panaderia:hover {
+  background-color: #e69500;
+  color: white;
+}
+/* Estilos existentes para las imágenes del carrusel */
+.carousel-inner img {
+    max-height: 400px;
+    object-fit: cover;
+}
+
+/* Nueva clase para ajustar el margen del carrusel */
+.custom-carousel-margin {
+    margin-top: 2rem; /* Reduce el margen superior. Puedes ajustar este valor (ej: 1rem, 0rem, -1rem) */
+    margin-bottom: 3rem; /* Añade un margen inferior para separar del footer, si lo deseas */
+}
+
+/* Colores personalizados (si aún no los tienes, puedes agregarlos) */
+.text-brown {
+    color: #8B4513; /* Un color café para el texto */
+}
+
+.bg-brown {
+    background-color: #D2B48C; /* Un color café claro para el fondo */
+}
