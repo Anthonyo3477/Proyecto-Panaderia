@@ -2,40 +2,39 @@ const express = require('express');
 const router = express.Router();
 const productoController = require('../../db/controllers/productoController');
 
-// Middleware para parsear datos (formularios y JSON)
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
-// Mostrar formulario para crear nuevo producto
+// Mostrar formulario para crear nuevo producto de repostería
 router.get('/nuevo', (req, res) => {
     res.render('nuevo-producto', {
-        title: 'Registrar Nuevo Producto',
-        categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+        title: 'Registrar Producto de Repostería',
+        categorias: ['Repostería']
     });
 });
 
-// Mostrar todos los productos clasificados como "Pan" (Panadería)
+// Mostrar todos los productos de repostería
 router.get('/', async (req, res) => {
     try {
-        const productos = await productoController.getProductosPorClasificacion('Pan');
+        const productos = await productoController.getProductosPorClasificacion('Repostería');
 
-        res.render('Panaderia', {
-            title: 'Productos de Panadería',
+        res.render('Reposteria', {
+            title: 'Productos de Repostería',
             productos
         });
     } catch (error) {
-        console.error('Error al obtener productos:', error);
-        res.status(500).render('error', { message: 'Error al cargar los productos de panadería' });
+        console.error('Error al obtener productos de repostería:', error);
+        res.status(500).render('error', { message: 'Error al cargar los productos de repostería' });
     }
 });
 
-// Mostrar detalle de producto
+// Mostrar detalle de un producto de repostería
 router.get('/:id', async (req, res) => {
     try {
         const producto = await productoController.getProductoById(req.params.id);
 
-        if (!producto) {
-            return res.status(404).render('error', { message: 'Producto no encontrado' });
+        if (!producto || producto.clasificacion !== 'Repostería') {
+            return res.status(404).render('error', { message: 'Producto de repostería no encontrado' });
         }
 
         res.render('producto-detalle', {
@@ -48,44 +47,45 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Procesar creación de producto
+// Procesar creación de producto de repostería
 router.post('/insert', async (req, res) => {
     try {
-        const { nombre, clasificacion, descripcion } = req.body;
+        const { nombre, descripcion } = req.body;
+        const clasificacion = 'Repostería';
 
-        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim()) {
+        if (!nombre?.trim() || !descripcion?.trim()) {
             return res.status(400).render('nuevo-producto', {
                 error: 'Todos los campos son obligatorios',
-                valores: req.body,
-                categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+                valores: { nombre, clasificacion, descripcion },
+                categorias: ['Repostería']
             });
         }
 
         await productoController.insertProducto({ nombre, clasificacion, descripcion });
-        res.redirect('/Carro');
+        res.redirect('/Reposteria');
     } catch (error) {
-        console.error('Error al crear producto:', error);
+        console.error('Error al crear producto de repostería:', error);
         res.status(500).render('nuevo-producto', {
             error: 'Error al guardar el producto',
             valores: req.body,
-            categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+            categorias: ['Repostería']
         });
     }
 });
 
-// Mostrar formulario para editar producto
+// Mostrar formulario para editar producto de repostería
 router.get('/editar/:id', async (req, res) => {
     try {
         const producto = await productoController.getProductoById(req.params.id);
 
-        if (!producto) {
-            return res.status(404).render('error', { message: 'Producto no encontrado' });
+        if (!producto || producto.clasificacion !== 'Repostería') {
+            return res.status(404).render('error', { message: 'Producto de repostería no encontrado' });
         }
 
         res.render('editar-producto', {
             title: `Editar ${producto.nombre}`,
             producto,
-            categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+            categorias: ['Repostería']
         });
     } catch (error) {
         console.error('Error al cargar el formulario de edición:', error);
@@ -93,12 +93,13 @@ router.get('/editar/:id', async (req, res) => {
     }
 });
 
-// Procesar actualización de producto
+// Procesar actualización de producto de repostería
 router.post('/actualizar/:id', async (req, res) => {
     try {
-        const { nombre, clasificacion, descripcion } = req.body;
+        const { nombre, descripcion } = req.body;
+        const clasificacion = 'Repostería';
 
-        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim()) {
+        if (!nombre?.trim() || !descripcion?.trim()) {
             return res.status(400).render('editar-producto', {
                 error: 'Todos los campos son obligatorios',
                 producto: {
@@ -107,33 +108,41 @@ router.post('/actualizar/:id', async (req, res) => {
                     clasificacion,
                     descripcion
                 },
-                categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+                categorias: ['Repostería']
             });
         }
 
         await productoController.updateProducto(req.params.id, { nombre, clasificacion, descripcion });
 
-        res.redirect(`/producto/${req.params.id}`);
+        res.redirect(`/Reposteria/${req.params.id}`);
     } catch (error) {
-        console.error('Error al actualizar producto:', error);
+        console.error('Error al actualizar producto de repostería:', error);
         res.status(500).render('editar-producto', {
             error: 'Error al actualizar el producto',
             producto: {
                 id: req.params.id,
-                ...req.body
+                nombre,
+                clasificacion: 'Repostería',
+                descripcion
             },
-            categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+            categorias: ['Repostería']
         });
     }
 });
 
-// Procesar eliminación de producto
+// Procesar eliminación de producto de repostería
 router.post('/eliminar/:id', async (req, res) => {
     try {
+        const producto = await productoController.getProductoById(req.params.id);
+
+        if (producto?.clasificacion !== 'Repostería') {
+            return res.status(400).render('error', { message: 'Producto no es de repostería' });
+        }
+
         await productoController.deleteProducto(req.params.id);
-        res.redirect('/Panaderia'); // 👈 Redirige correctamente a la vista con productos actualizados
+        res.redirect('/Reposteria');
     } catch (error) {
-        console.error('Error al eliminar producto:', error);
+        console.error('Error al eliminar producto de repostería:', error);
         res.status(500).render('error', { message: 'Error al eliminar el producto' });
     }
 });

@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title || "Repostería" %>
-    </title>
+    <title><%= title || "Repostería" %></title>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -16,7 +14,6 @@
 </head>
 
 <body>
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-light fixed-top">
         <div class="container-fluid">
@@ -28,21 +25,11 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/">Inicio</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Panaderia">Panadería</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Reposteria">Repostería</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Carro">Carro</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Login_Registrar">Registro</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="/">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Panaderia">Panadería</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Reposteria">Repostería</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Carro">Carro</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Login_Registrar">Registro</a></li>
                     <li class="nav-item"><a class="nav-link" href="/AgregarProducto">Agregar Productos</a></li>
                 </ul>
             </div>
@@ -54,42 +41,41 @@
         <h1 class="text-center">Repostería</h1>
         <p class="text-center">Explora nuestros deliciosos productos.</p>
 
-        <div class="row">
-            <!-- Tarjeta 1 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <img src="https://www.recetario-cocina.com/archivosbd/tartaleta-de-fresas-y-arandanos.jpg" class="card-img-top" alt="Tarta de Fresas">
-                    <div class="card-body">
-                        <h5 class="card-title">Tarta de Fresas</h5>
-                        <p class="card-text">Una deliciosa tarta con fresas frescas y crema pastelera.</p>
-                        <a href="#" class="btn btn-primary">Ver más</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tarjeta 2 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <img src="https://comidaschilenas.com/wp-content/uploads/2021/04/Receta-de-muffins-de-chocolate-f%C3%A1ciles.jpg" class="card-img-top" alt="Muffins de Chocolate">
-                    <div class="card-body">
-                        <h5 class="card-title">Muffins de Chocolate</h5>
-                        <p class="card-text">Esponjosos muffins con chispas de chocolate y un toque de vainilla.</p>
-                        <a href="#" class="btn btn-primary">Ver más</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tarjeta 3 -->
-            <div class="col-md-4">
-                <div class="card">
-                    <img src="https://cdn0.recetasgratis.net/es/posts/1/4/9/cheesecake_de_frutos_rojos_73941_orig.jpg" class="card-img-top" alt="Cheesecake de Frutos Rojos">
-                    <div class="card-body">
-                        <h5 class="card-title">Cheesecake de Frutos Rojos</h5>
-                        <p class="card-text">Suave cheesecake con una deliciosa cobertura de frutos rojos.</p>
-                        <a href="#" class="btn btn-primary">Ver más</a>
-                    </div>
-                </div>
-            </div>
+        <!-- Tabla de productos -->
+        <div class="table-responsive mt-4">
+            <table class="table table-striped table-bordered align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (productos && productos.length > 0) { %>
+                        <% productos.forEach((producto, index) => { %>
+                            <tr>
+                                <th scope="row"><%= index + 1 %></th>
+                                <td><%= producto.nombre %></td>
+                                <td><%= producto.descripcion %></td>
+                                <td>
+                                    <a href="/Reposteria/<%= producto.id %>" class="btn btn-sm btn-info">Ver</a>
+                                    <a href="/Reposteria/editar/<%= producto.id %>" class="btn btn-sm btn-warning">Editar</a>
+                                    <form action="/Reposteria/eliminar/<%= producto.id %>" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('¿Estás seguro de eliminar este producto?')">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="4" class="text-center">No hay productos de repostería disponibles.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
         </div>
     </main>
 
@@ -100,10 +86,8 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- Script personalizado -->
     <script src="/js/site.js"></script>
-
 </body>
 
 </html>
