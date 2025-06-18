@@ -1,15 +1,14 @@
-const db = require('../Conexion'); // Ajusta la ruta si está en otro lugar
+const db = require('../Conexion');
 
 module.exports = {
     /**
-     * Obtiene todos los productos clasificados como "Pastel"
-     * @returns {Promise<Array>} Lista de productos de repostería
+     * Obtiene todos los productos clasificados como "Repostería"
      */
     getProductosReposteria: async () => {
         try {
             const [rows] = await db.execute(
                 'SELECT * FROM producto WHERE clasificacion = ? ORDER BY nombre',
-                ['Pastel'] // Cambia a 'Repostería' si es tu categoría real
+                ['Repostería']
             );
             return rows;
         } catch (error) {
@@ -20,14 +19,12 @@ module.exports = {
 
     /**
      * Obtiene un producto de repostería por su ID
-     * @param {number} id - ID del producto
-     * @returns {Promise<Object|null>} Producto encontrado o null
      */
     getProductoReposteriaById: async (id) => {
         try {
             const [rows] = await db.execute(
                 'SELECT * FROM producto WHERE id = ? AND clasificacion = ?',
-                [id, 'Pastel']
+                [id, 'Repostería']
             );
             return rows.length ? rows[0] : null;
         } catch (error) {
@@ -37,11 +34,7 @@ module.exports = {
     },
 
     /**
-     * Inserta un nuevo producto clasificado como "Pastel"
-     * @param {Object} producto - Datos del producto
-     * @param {string} producto.nombre
-     * @param {string} producto.descripcion
-     * @returns {Promise<Object>} Producto creado
+     * Inserta un nuevo producto clasificado como "Repostería"
      */
     insertProductoReposteria: async (producto) => {
         try {
@@ -53,13 +46,13 @@ module.exports = {
 
             const [result] = await db.execute(
                 'INSERT INTO producto (nombre, clasificacion, descripcion) VALUES (?, ?, ?)',
-                [nombre.trim(), 'Pastel', descripcion.trim()]
+                [nombre.trim(), 'Repostería', descripcion.trim()]
             );
 
             return {
                 id: result.insertId,
                 nombre: nombre.trim(),
-                clasificacion: 'Pastel',
+                clasificacion: 'Repostería',
                 descripcion: descripcion.trim()
             };
         } catch (error) {
@@ -70,9 +63,6 @@ module.exports = {
 
     /**
      * Actualiza un producto de repostería existente
-     * @param {number} id - ID del producto
-     * @param {Object} producto - Nuevos datos
-     * @returns {Promise<Object>} Producto actualizado
      */
     updateProductoReposteria: async (id, producto) => {
         try {
@@ -85,7 +75,7 @@ module.exports = {
             // Verificar que el producto es de repostería
             const [rows] = await db.execute(
                 'SELECT * FROM producto WHERE id = ? AND clasificacion = ?',
-                [id, 'Pastel']
+                [id, 'Repostería']
             );
 
             if (rows.length === 0) {
@@ -100,7 +90,7 @@ module.exports = {
             return {
                 id,
                 nombre: nombre.trim(),
-                clasificacion: 'Pastel',
+                clasificacion: 'Repostería',
                 descripcion: descripcion.trim()
             };
         } catch (error) {
@@ -111,15 +101,13 @@ module.exports = {
 
     /**
      * Elimina un producto de repostería por ID
-     * @param {number} id - ID del producto
-     * @returns {Promise<void>}
      */
     deleteProductoReposteria: async (id) => {
         try {
             // Verificar primero que sea de repostería
             const [rows] = await db.execute(
                 'SELECT * FROM producto WHERE id = ? AND clasificacion = ?',
-                [id, 'Pastel']
+                [id, 'Repostería']
             );
 
             if (rows.length === 0) {

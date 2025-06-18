@@ -51,8 +51,7 @@
                             <select class="form-select" id="clasificacion" name="clasificacion" required>
                                 <option value="">Seleccione una categoría</option>
                                 <option value="Pan">Pan</option>
-                                <option value="Torta">Torta</option>
-                                <option value="Pastel">Pastel</option>
+                                <option value="Reposteria">Reposteria</option>
                                 <option value="Otro">Otro</option>
                             </select>
                         </div>
@@ -63,17 +62,17 @@
                             placeholder="Describe el producto..." required></textarea>
                     </div>
 
-                    <% if (typeof error !== 'undefined') { %>
+                    <% if (typeof error !=='undefined' ) { %>
                         <div class="alert alert-danger mb-3">
                             <%= error %>
                         </div>
-                    <% } %>
+                        <% } %>
 
-                    <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-panaderia btn-lg">
-                            <i class="bi bi-check-circle-fill me-2"></i>Guardar Producto
-                        </button>
-                    </div>
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-panaderia btn-lg">
+                                    <i class="bi bi-check-circle-fill me-2"></i>Guardar Producto
+                                </button>
+                            </div>
                 </form>
             </div>
         </div>

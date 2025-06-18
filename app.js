@@ -23,7 +23,10 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Rutas importadas y declaradas
 const productoRoutes = require('./routes/api/producto.routes.js');
-app.use('/Panaderia', productoRoutes); // Cambiado aquí para cargar los productos correctamente
+app.use('/Panaderia', productoRoutes);
+
+const reposteriaRoutes = require('./routes/api/reposteria.routes.js');
+app.use('/Reposteria', reposteriaRoutes);
 
 const rutas = require('./routes/index.js');
 app.use(rutas);
@@ -31,10 +34,6 @@ app.use(rutas);
 // Rutas principales
 app.get('/', (req, res) => {
     res.render('Index', { title: 'Inicio' });
-});
-
-app.get('/Reposteria', (req, res) => {
-    res.render('Reposteria', { title: 'Repostería' });
 });
 
 app.get('/Carro', (req, res) => {
