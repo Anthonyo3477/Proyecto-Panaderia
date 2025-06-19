@@ -10,7 +10,7 @@ router.use(express.json());
 router.get('/nuevo', (req, res) => {
     res.render('nuevo-producto', {
         title: 'Registrar Nuevo Producto',
-        categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+        categorias: ['Pan', 'Reposteria', 'Otro']
     });
 });
 
@@ -29,7 +29,6 @@ router.post('/insert', async (req, res) => {
 
         await productoController.insertProducto({ nombre, clasificacion, descripcion });
 
-        // Redirige a la página /panaderia después de agregar el producto
         res.redirect('/panaderia');
     } catch (error) {
         console.error('Error al crear producto:', error);
@@ -41,7 +40,7 @@ router.post('/insert', async (req, res) => {
     }
 });
 
-// Mostrar todos los productos clasificados como "Pan" (Panadería)
+// Mostrar todos los productos clasificados como "Pan"
 router.get('/', async (req, res) => {
     try {
         const productos = await productoController.getProductosPorClasificacion('Pan');
@@ -84,7 +83,7 @@ router.get('/editar/:id', async (req, res) => {
             return res.status(404).render('error', { message: 'Producto no encontrado' });
         }
 
-        res.render('editar-producto', {
+        res.render('EditarProducto', {
             title: `Editar ${producto.nombre}`,
             producto,
             categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
@@ -101,7 +100,7 @@ router.post('/actualizar/:id', async (req, res) => {
         const { nombre, clasificacion, descripcion } = req.body;
 
         if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim()) {
-            return res.status(400).render('editar-producto', {
+            return res.status(400).render('EditarProducto', {
                 error: 'Todos los campos son obligatorios',
                 producto: {
                     id: req.params.id,
@@ -115,10 +114,11 @@ router.post('/actualizar/:id', async (req, res) => {
 
         await productoController.updateProducto(req.params.id, { nombre, clasificacion, descripcion });
 
-        res.redirect(`/producto/${req.params.id}`);
+        // ✅ Ahora redirige a la tabla de productos
+        res.redirect('/panaderia');
     } catch (error) {
         console.error('Error al actualizar producto:', error);
-        res.status(500).render('editar-producto', {
+        res.status(500).render('EditarProducto', {
             error: 'Error al actualizar el producto',
             producto: {
                 id: req.params.id,

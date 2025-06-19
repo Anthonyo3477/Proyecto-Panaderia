@@ -28,6 +28,7 @@ CREATE TABLE IF NOT EXISTS producto (
     nombre VARCHAR(100) NOT NULL,
     clasificación VARCHAR(50),
     descripcion TEXT,
+    precio DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     PRIMARY KEY (id)
 );
 

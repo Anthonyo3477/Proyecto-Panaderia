@@ -55,7 +55,7 @@ router.get('/editar/:id', async (req, res) => {
             return res.status(404).render('error', { message: 'Producto no encontrado' });
         }
 
-        res.render('modificarproducto', {
+        res.render('EditarProducto', {
             title: 'Editar Producto de Repostería',
             producto
         });

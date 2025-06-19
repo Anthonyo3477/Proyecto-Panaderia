@@ -1,12 +1,6 @@
-const db = require('../Conexion'); // Ajusta la ruta según tu estructura de carpetas
+const db = require('../Conexion');
 
 module.exports = {
-    /**
-     * Obtiene todos los productos con paginación
-     * @param {number} page - Página actual (por defecto 1)
-     * @param {number} limit - Cantidad de productos por página (por defecto 10)
-     * @returns {Promise<Array>} Lista de productos
-     */
     getAllProductos: async (page = 1, limit = 10) => {
         try {
             const offset = (page - 1) * limit;
@@ -21,11 +15,6 @@ module.exports = {
         }
     },
 
-    /**
-     * Obtiene un producto por su ID
-     * @param {number} id - ID del producto
-     * @returns {Promise<Object|null>} Producto encontrado o null
-     */
     getProductoById: async (id) => {
         try {
             const [rows] = await db.execute(
@@ -39,32 +28,25 @@ module.exports = {
         }
     },
 
-    /**
-     * Inserta un nuevo producto
-     * @param {Object} producto - Datos del producto
-     * @param {string} producto.nombre
-     * @param {string} producto.clasificacion
-     * @param {string} producto.descripcion
-     * @returns {Promise<Object>} Producto creado con ID
-     */
     insertProducto: async (producto) => {
         try {
-            const { nombre, clasificacion, descripcion } = producto;
+            const { nombre, clasificacion, descripcion, precio } = producto;
 
-            if (!nombre || !clasificacion || !descripcion) {
+            if (!nombre || !clasificacion || !descripcion || precio == null) {
                 throw new Error('Faltan campos obligatorios');
             }
 
             const [result] = await db.execute(
-                'INSERT INTO producto (nombre, clasificacion, descripcion) VALUES (?, ?, ?)',
-                [nombre.trim(), clasificacion.trim(), descripcion.trim()]
+                'INSERT INTO producto (nombre, clasificacion, descripcion, precio) VALUES (?, ?, ?, ?)',
+                [nombre.trim(), clasificacion.trim(), descripcion.trim(), parseFloat(precio)]
             );
 
             return {
                 id: result.insertId,
                 nombre: nombre.trim(),
                 clasificacion: clasificacion.trim(),
-                descripcion: descripcion.trim()
+                descripcion: descripcion.trim(),
+                precio: parseFloat(precio)
             };
         } catch (error) {
             console.error('Error en insertProducto:', error);
@@ -72,23 +54,17 @@ module.exports = {
         }
     },
 
-    /**
-     * Actualiza un producto existente
-     * @param {number} id - ID del producto a actualizar
-     * @param {Object} producto - Nuevos datos del producto
-     * @returns {Promise<Object>} Producto actualizado
-     */
     updateProducto: async (id, producto) => {
         try {
-            const { nombre, clasificacion, descripcion } = producto;
+            const { nombre, clasificacion, descripcion, precio } = producto;
 
-            if (!nombre || !clasificacion || !descripcion) {
+            if (!nombre || !clasificacion || !descripcion || precio == null) {
                 throw new Error('Faltan campos obligatorios');
             }
 
             const [result] = await db.execute(
-                'UPDATE producto SET nombre = ?, clasificacion = ?, descripcion = ? WHERE id = ?',
-                [nombre.trim(), clasificacion.trim(), descripcion.trim(), id]
+                'UPDATE producto SET nombre = ?, clasificacion = ?, descripcion = ?, precio = ? WHERE id = ?',
+                [nombre.trim(), clasificacion.trim(), descripcion.trim(), parseFloat(precio), id]
             );
 
             if (result.affectedRows === 0) {
@@ -99,7 +75,8 @@ module.exports = {
                 id,
                 nombre: nombre.trim(),
                 clasificacion: clasificacion.trim(),
-                descripcion: descripcion.trim()
+                descripcion: descripcion.trim(),
+                precio: parseFloat(precio)
             };
         } catch (error) {
             console.error('Error en updateProducto:', error);
@@ -107,11 +84,6 @@ module.exports = {
         }
     },
 
-    /**
-     * Elimina un producto por ID
-     * @param {number} id - ID del producto a eliminar
-     * @returns {Promise<void>}
-     */
     deleteProducto: async (id) => {
         try {
             const [result] = await db.execute(
@@ -128,11 +100,6 @@ module.exports = {
         }
     },
 
-    /**
-     * Obtiene productos filtrados por clasificación
-     * @param {string} clasificacion
-     * @returns {Promise<Array>} Productos filtrados
-     */
     getProductosPorClasificacion: async (clasificacion) => {
         try {
             const [rows] = await db.execute(
