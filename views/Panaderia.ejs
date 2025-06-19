@@ -34,12 +34,10 @@
             </div>
         </div>
     </nav>
-
     <!-- Contenido principal -->
     <main class="container mt-5 pt-5">
         <h1 class="text-center">Panadería</h1>
         <p class="text-center">Explora nuestros productos de panadería</p>
-
         <!-- Tabla de productos -->
         <div class="table-responsive mt-4">
             <table class="table table-bordered table-hover align-middle">
@@ -67,18 +65,27 @@
                                 <td>
                                     <%= producto.descripcion %>
                                 </td>
+                                <td class="text-center">
+                                    <a href="/<%= producto.clasificacion === 'Repostería' ? 'Reposteria' : 'Panaderia' %>/editar/<%= producto.id %>"
+                                        class="btn btn-sm btn-warning">Modificar</a>
+                                    <form
+                                        action="/<%= producto.clasificacion === 'Repostería' ? 'Reposteria' : 'Panaderia' %>/eliminar/<%= producto.id %>"
+                                        method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('¿Estás seguro de eliminar este producto?');">Eliminar</button>
+                                    </form>
+                                </td>
                             </tr>
                             <% }) %>
                                 <% } else { %>
                                     <tr>
-                                        <td colspan="4" class="text-center">No hay productos disponibles por ahora.</td>
+                                        <td colspan="5" class="text-center">No hay productos disponibles por ahora.</td>
                                     </tr>
                                     <% } %>
                 </tbody>
             </table>
         </div>
     </main>
-
     <!-- Footer -->
     <footer class="bg-light text-center py-3 mt-4">
         <p>&copy; <%= new Date().getFullYear() %> - Panadería Don Juanito</p>

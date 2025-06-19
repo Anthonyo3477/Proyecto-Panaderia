@@ -47,7 +47,46 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Procesar creacion de producto de reposteria
+// Mostrar formulario para editar un producto de repostería
+router.get('/editar/:id', async (req, res) => {
+    try {
+        const producto = await productoController.getProductoReposteriaById(req.params.id);
+        if (!producto) {
+            return res.status(404).render('error', { message: 'Producto no encontrado' });
+        }
+
+        res.render('modificarproducto', {
+            title: 'Editar Producto de Repostería',
+            producto
+        });
+    } catch (error) {
+        console.error('Error al obtener producto de repostería:', error);
+        res.status(500).render('error', { message: 'Error al cargar el producto' });
+    }
+});
+
+// Procesar actualización de producto de repostería
+router.post('/actualizar/:id', async (req, res) => {
+    try {
+        const { nombre, descripcion } = req.body;
+
+        if (!nombre?.trim() || !descripcion?.trim()) {
+            const producto = await productoController.getProductoReposteriaById(req.params.id);
+            return res.status(400).render('modificarproducto', {
+                error: 'Todos los campos son obligatorios',
+                producto
+            });
+        }
+
+        await productoController.updateProductoReposteria(req.params.id, { nombre, descripcion });
+        res.redirect('/Reposteria');
+    } catch (error) {
+        console.error('Error al actualizar producto de repostería:', error);
+        res.status(500).render('error', { message: 'Error al actualizar el producto' });
+    }
+});
+
+// Procesar creación de producto de reposteria
 router.post('/insert', async (req, res) => {
     try {
         const { nombre, descripcion, precio, cantidad } = req.body;
@@ -72,7 +111,7 @@ router.post('/insert', async (req, res) => {
     }
 });
 
-// Procesar eliminacion de producto de reposteria
+// Procesar eliminación de producto de repostería
 router.post('/eliminar/:id', async (req, res) => {
     try {
         await productoController.deleteProductoReposteria(req.params.id);
