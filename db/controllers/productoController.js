@@ -28,25 +28,23 @@ module.exports = {
         }
     },
 
-    insertProducto: async (producto) => {
+    insertProducto: async ({ nombre, clasificacion, precio, descripcion }) => {
         try {
-            const { nombre, clasificacion, descripcion, precio } = producto;
-
-            if (!nombre || !clasificacion || !descripcion || precio == null) {
+            if (!nombre || !clasificacion || precio == null || !descripcion) {
                 throw new Error('Faltan campos obligatorios');
             }
 
             const [result] = await db.execute(
-                'INSERT INTO producto (nombre, clasificacion, descripcion, precio) VALUES (?, ?, ?, ?)',
-                [nombre.trim(), clasificacion.trim(), descripcion.trim(), parseFloat(precio)]
+                'INSERT INTO producto (nombre, clasificacion, precio, descripcion) VALUES (?, ?, ?, ?)',
+                [nombre.trim(), clasificacion.trim(), parseFloat(precio), descripcion.trim()]
             );
 
             return {
                 id: result.insertId,
                 nombre: nombre.trim(),
                 clasificacion: clasificacion.trim(),
-                descripcion: descripcion.trim(),
-                precio: parseFloat(precio)
+                precio: parseFloat(precio),
+                descripcion: descripcion.trim()
             };
         } catch (error) {
             console.error('Error en insertProducto:', error);
@@ -54,17 +52,15 @@ module.exports = {
         }
     },
 
-    updateProducto: async (id, producto) => {
+    updateProducto: async (id, { nombre, clasificacion, precio, descripcion }) => {
         try {
-            const { nombre, clasificacion, descripcion, precio } = producto;
-
-            if (!nombre || !clasificacion || !descripcion || precio == null) {
+            if (!nombre || !clasificacion || precio == null || !descripcion) {
                 throw new Error('Faltan campos obligatorios');
             }
 
             const [result] = await db.execute(
-                'UPDATE producto SET nombre = ?, clasificacion = ?, descripcion = ?, precio = ? WHERE id = ?',
-                [nombre.trim(), clasificacion.trim(), descripcion.trim(), parseFloat(precio), id]
+                'UPDATE producto SET nombre = ?, clasificacion = ?, precio = ?, descripcion = ? WHERE id = ?',
+                [nombre.trim(), clasificacion.trim(), parseFloat(precio), descripcion.trim(), id]
             );
 
             if (result.affectedRows === 0) {
@@ -75,8 +71,8 @@ module.exports = {
                 id,
                 nombre: nombre.trim(),
                 clasificacion: clasificacion.trim(),
-                descripcion: descripcion.trim(),
-                precio: parseFloat(precio)
+                precio: parseFloat(precio),
+                descripcion: descripcion.trim()
             };
         } catch (error) {
             console.error('Error en updateProducto:', error);

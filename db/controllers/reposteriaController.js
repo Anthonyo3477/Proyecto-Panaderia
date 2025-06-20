@@ -1,9 +1,7 @@
 const db = require('../Conexion');
 
 module.exports = {
-    /**
-     * Obtiene todos los productos clasificados como "Repostería"
-     */
+    // Obtener todos los productos de repostería
     getProductosReposteria: async () => {
         try {
             const [rows] = await db.execute(
@@ -17,9 +15,7 @@ module.exports = {
         }
     },
 
-    /**
-     * Obtiene un producto de repostería por su ID
-     */
+    // Obtener un producto de repostería por ID
     getProductoReposteriaById: async (id) => {
         try {
             const [rows] = await db.execute(
@@ -33,13 +29,9 @@ module.exports = {
         }
     },
 
-    /**
-     * Inserta un nuevo producto clasificado como "Repostería"
-     */
-    insertProductoReposteria: async (producto) => {
+    // Insertar un nuevo producto de repostería
+    insertProductoReposteria: async ({ nombre, descripcion }) => {
         try {
-            const { nombre, descripcion } = producto;
-
             if (!nombre || !descripcion) {
                 throw new Error('Faltan campos obligatorios');
             }
@@ -61,18 +53,13 @@ module.exports = {
         }
     },
 
-    /**
-     * Actualiza un producto de repostería existente
-     */
-    updateProductoReposteria: async (id, producto) => {
+    // Actualizar un producto de repostería
+    updateProductoReposteria: async (id, { nombre, descripcion }) => {
         try {
-            const { nombre, descripcion } = producto;
-
             if (!nombre || !descripcion) {
                 throw new Error('Faltan campos obligatorios');
             }
 
-            // Verificar que el producto es de repostería
             const [rows] = await db.execute(
                 'SELECT * FROM producto WHERE id = ? AND clasificacion = ?',
                 [id, 'Repostería']
@@ -99,12 +86,9 @@ module.exports = {
         }
     },
 
-    /**
-     * Elimina un producto de repostería por ID
-     */
+    // Eliminar un producto de repostería
     deleteProductoReposteria: async (id) => {
         try {
-            // Verificar primero que sea de repostería
             const [rows] = await db.execute(
                 'SELECT * FROM producto WHERE id = ? AND clasificacion = ?',
                 [id, 'Repostería']

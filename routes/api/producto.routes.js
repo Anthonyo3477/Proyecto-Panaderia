@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const productoController = require('../../db/controllers/productoController');
 
-// Middleware para parsear datos
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
@@ -10,24 +9,31 @@ router.use(express.json());
 router.get('/nuevo', (req, res) => {
     res.render('nuevo-producto', {
         title: 'Registrar Nuevo Producto',
-        categorias: ['Pan', 'Reposteria', 'Otro']
+        categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
     });
 });
 
-// Procesar creación de producto (POST)
+// Procesar creación de producto
 router.post('/insert', async (req, res) => {
     try {
-        const { nombre, clasificacion, descripcion } = req.body;
+        const { nombre, clasificacion, precio, descripcion } = req.body;
 
-        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim()) {
+        // Validación de campos
+        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim() || !precio || isNaN(precio)) {
             return res.status(400).render('nuevo-producto', {
-                error: 'Todos los campos son obligatorios',
+                error: 'Todos los campos son obligatorios y el precio debe ser válido',
                 valores: req.body,
                 categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
             });
         }
 
-        await productoController.insertProducto({ nombre, clasificacion, descripcion });
+        // Inserción en DB
+        await productoController.insertProducto({
+            nombre: nombre.trim(),
+            clasificacion: clasificacion.trim(),
+            precio: parseFloat(precio),
+            descripcion: descripcion.trim()
+        });
 
         res.redirect('/panaderia');
     } catch (error) {
@@ -35,6 +41,68 @@ router.post('/insert', async (req, res) => {
         res.status(500).render('nuevo-producto', {
             error: 'Error al guardar el producto',
             valores: req.body,
+            categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+        });
+    }
+});
+
+// Mostrar formulario para editar producto
+router.get('/editar/:id', async (req, res) => {
+    try {
+        const producto = await productoController.getProductoById(req.params.id);
+
+        if (!producto) {
+            return res.status(404).render('error', { message: 'Producto no encontrado' });
+        }
+
+        res.render('EditarProducto', {
+            title: `Editar ${producto.nombre}`,
+            producto,
+            categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+        });
+    } catch (error) {
+        console.error('Error al cargar el formulario de edición:', error);
+        res.status(500).render('error', { message: 'Error al cargar el formulario' });
+    }
+});
+
+// Procesar actualización de producto
+router.post('/actualizar/:id', async (req, res) => {
+    try {
+        const { nombre, clasificacion, precio, descripcion } = req.body;
+
+        // Validación
+        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim() || !precio || isNaN(precio)) {
+            return res.status(400).render('EditarProducto', {
+                error: 'Todos los campos son obligatorios y el precio debe ser válido',
+                producto: {
+                    id: req.params.id,
+                    nombre,
+                    clasificacion,
+                    descripcion,
+                    precio
+                },
+                categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
+            });
+        }
+
+        // Actualización en DB
+        await productoController.updateProducto(req.params.id, {
+            nombre: nombre.trim(),
+            clasificacion: clasificacion.trim(),
+            precio: parseFloat(precio),
+            descripcion: descripcion.trim()
+        });
+
+        res.redirect('/panaderia');
+    } catch (error) {
+        console.error('Error al actualizar producto:', error);
+        res.status(500).render('EditarProducto', {
+            error: 'Error al actualizar el producto',
+            producto: {
+                id: req.params.id,
+                ...req.body
+            },
             categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
         });
     }
@@ -71,61 +139,6 @@ router.get('/:id', async (req, res) => {
     } catch (error) {
         console.error('Error al obtener producto:', error);
         res.status(500).render('error', { message: 'Error al cargar el producto' });
-    }
-});
-
-// Mostrar formulario para editar producto
-router.get('/editar/:id', async (req, res) => {
-    try {
-        const producto = await productoController.getProductoById(req.params.id);
-
-        if (!producto) {
-            return res.status(404).render('error', { message: 'Producto no encontrado' });
-        }
-
-        res.render('EditarProducto', {
-            title: `Editar ${producto.nombre}`,
-            producto,
-            categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
-        });
-    } catch (error) {
-        console.error('Error al cargar el formulario de edición:', error);
-        res.status(500).render('error', { message: 'Error al cargar el formulario' });
-    }
-});
-
-// Procesar actualización de producto
-router.post('/actualizar/:id', async (req, res) => {
-    try {
-        const { nombre, clasificacion, descripcion } = req.body;
-
-        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim()) {
-            return res.status(400).render('EditarProducto', {
-                error: 'Todos los campos son obligatorios',
-                producto: {
-                    id: req.params.id,
-                    nombre,
-                    clasificacion,
-                    descripcion
-                },
-                categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
-            });
-        }
-
-        await productoController.updateProducto(req.params.id, { nombre, clasificacion, descripcion });
-
-        // ✅ Ahora redirige a la tabla de productos
-        res.redirect('/panaderia');
-    } catch (error) {
-        console.error('Error al actualizar producto:', error);
-        res.status(500).render('EditarProducto', {
-            error: 'Error al actualizar el producto',
-            producto: {
-                id: req.params.id,
-                ...req.body
-            },
-            categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
-        });
     }
 });
 
