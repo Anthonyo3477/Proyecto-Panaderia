@@ -47,43 +47,56 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (productos.length > 0) { %>
-                        <% productos.forEach(producto => { %>
+                    <% if (productos.length> 0) { %>
+                        <% productos.forEach(producto=> { %>
                             <tr>
-                                <td class="text-center"><%= producto.id %></td>
-                                <td><%= producto.nombre %></td>
-                                <td class="text-center"><%= producto.clasificacion %></td>
-                                <td><%= producto.descripcion %></td>
                                 <td class="text-center">
-                                    $<%= parseFloat(producto.precio).toLocaleString('es-CL', {
-                                        minimumFractionDigits: 0,
-                                        maximumFractionDigits: 0
-                                    }) %>
+                                    <%= producto.id %>
                                 </td>
-                                <td class="text-center"><%= producto.cantidad %></td>
+                                <td>
+                                    <%= producto.nombre %>
+                                </td>
                                 <td class="text-center">
-                                    <a href="/<%= producto.clasificacion === 'Repostería' ? 'Reposteria' : 'Panaderia' %>/editar/<%= producto.id %>" class="btn btn-sm btn-warning">Modificar</a>
-                                    
-                                    <form action="/<%= producto.clasificacion === 'Repostería' ? 'Reposteria' : 'Panaderia' %>/eliminar/<%= producto.id %>" method="POST" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este producto?');">Eliminar</button>
+                                    <%= producto.clasificacion %>
+                                </td>
+                                <td>
+                                    <%= producto.descripcion %>
+                                </td>
+                                <td class="text-center">
+                                    $<%= parseFloat(producto.precio).toLocaleString('es-CL', { minimumFractionDigits: 0,
+                                        maximumFractionDigits: 0 }) %>
+                                </td>
+                                <td class="text-center">
+                                    <%= producto.cantidad %>
+                                </td>
+                                <td class="text-center">
+                                    <a href="/<%= producto.clasificacion === 'Repostería' ? 'Reposteria' : 'Panaderia' %>/editar/<%= producto.id %>"
+                                        class="btn btn-sm btn-warning">Modificar</a>
+
+                                    <form
+                                        action="/<%= producto.clasificacion === 'Repostería' ? 'Reposteria' : 'Panaderia' %>/eliminar/<%= producto.id %>"
+                                        method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('¿Estás seguro de eliminar este producto?');">Eliminar</button>
                                     </form>
 
-                                    <% if (producto.cantidad > 0) { %>
-                                        <form action="/carro/agregar/<%= producto.id %>" method="POST" class="d-inline">
+                                    <% if (producto.cantidad> 0) { %>
+                                        <form action="/carro/agregar" method="POST" class="d-inline">
+                                            <input type="hidden" name="producto_id" value="<%= producto.id %>">
                                             <input type="hidden" name="cantidad" value="1">
                                             <button type="submit" class="btn btn-sm btn-success">Comprar</button>
                                         </form>
-                                    <% } else { %>
-                                        <span class="badge bg-secondary">Sin stock</span>
-                                    <% } %>
+                                        <% } else { %>
+                                            <span class="badge bg-secondary">Sin stock</span>
+                                            <% } %>
                                 </td>
                             </tr>
-                        <% }) %>
-                    <% } else { %>
-                        <tr>
-                            <td colspan="7" class="text-center">No hay productos disponibles por ahora.</td>
-                        </tr>
-                    <% } %>
+                            <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="7" class="text-center">No hay productos disponibles por ahora.</td>
+                                    </tr>
+                                    <% } %>
                 </tbody>
             </table>
         </div>

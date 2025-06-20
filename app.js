@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const session = require('express-session');  // Importamos express-session
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -9,6 +10,16 @@ app.use(express.json());
 
 // Middleware para archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Configuración de la sesión
+app.use(session({
+    secret: 'unSecretoMuySeguro12345',  // Cambia esto por una cadena segura en producción
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: 1000 * 60 * 60 // 1 hora
+    }
+}));
 
 // Logger para depurar body y requests
 app.use((req, res, next) => {
@@ -28,8 +39,11 @@ app.use('/Panaderia', productoRoutes);
 const reposteriaRoutes = require('./routes/api/reposteria.routes.js');
 app.use('/Reposteria', reposteriaRoutes);
 
-const carroRoutes = require('./routes/Carro');
-app.use('/Carro', carroRoutes);
+const carroRoutes = require('./routes/api/carro.routes.js');
+app.use('/carro', carroRoutes);
+
+const authRoutes = require('./routes/api/auth.routes.js');
+app.use('/auth', authRoutes);
 
 const rutas = require('./routes/index.js');
 app.use(rutas);

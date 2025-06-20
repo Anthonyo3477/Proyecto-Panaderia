@@ -10,7 +10,7 @@
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../public/css/Login_Registrer.css" />
+    <link rel="stylesheet" href="/css/Login_Registrer.css" /> <!-- Corregido -->
 </head>
 
 <body>
@@ -26,7 +26,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link active" href="/">Inicio</a></li>
                     <li class="nav-item"><a class="nav-link" href="/Panaderia">Panadería</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/Repositeria">Repostería</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Reposteria">Repostería</a></li>
                     <li class="nav-item"><a class="nav-link" href="/Carro">Carro</a></li>
                     <li class="nav-item"><a class="nav-link" href="/Login_Registrar">Registro</a></li>
                 </ul>
@@ -74,13 +74,11 @@
                         <form id="registerForm">
                             <div class="mb-3">
                                 <label for="RegisterNombre" class="form-label">Nombre Completo</label>
-                                <input type="text" class="form-control" id="RegisterNombre" name="nombre" required
-                                    value="<%= typeof valores !== 'undefined' ? valores.nombre : '' %>" />
+                                <input type="text" class="form-control" id="RegisterNombre" name="nombre" required />
                             </div>
                             <div class="mb-3">
                                 <label for="RegisterEmail" class="form-label">Correo Electrónico</label>
-                                <input type="email" class="form-control" id="RegisterEmail" name="correo" required
-                                    value="<%= typeof valores !== 'undefined' ? valores.correo : '' %>" />
+                                <input type="email" class="form-control" id="RegisterEmail" name="correo" required />
                             </div>
                             <div class="mb-3">
                                 <label for="RegisterPassword" class="form-label">Contraseña</label>
@@ -89,14 +87,13 @@
                             </div>
                             <div class="mb-3">
                                 <label for="RegisterTelefono" class="form-label">Teléfono</label>
-                                <input type="text" class="form-control" id="RegisterTelefono" name="telefono"
-                                    pattern="[0-9]{9,15}" title="Ingrese solo números, entre 9 y 15 dígitos"
-                                    value="<%= typeof valores !== 'undefined' ? valores.telefono : '' %>" />
+                                <input type="text" class="form-control" id="RegisterTelefono" name="telefono" required
+                                    pattern="[0-9]{9,15}" />
                             </div>
                             <div class="mb-3">
                                 <label for="RegisterDireccion" class="form-label">Dirección</label>
-                                <textarea class="form-control" id="RegisterDireccion" name="direccion"
-                                    rows="2"><%= typeof valores !== 'undefined' ? valores.direccion : '' %></textarea>
+                                <textarea class="form-control" id="RegisterDireccion" name="direccion" rows="2"
+                                    required></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="RegisterRol" class="form-label">Rol</label>
@@ -106,19 +103,14 @@
                                     <option value="admin">Administrador</option>
                                 </select>
                             </div>
-                            <% if (typeof error !=='undefined' && error) { %>
-                                <div class="alert alert-danger mb-3">
-                                    <%= error %>
-                                </div>
-                                <% } %>
-                                    <button type="button" class="btn btn-success w-100"
-                                        id="btnRegister">Registrarse</button>
+                            <button type="button" class="btn btn-success w-100" id="btnRegister">Registrarse</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </main>
+
     <!-- Footer -->
     <footer class="bg-light text-center py-3 fixed-bottom">
         <p>&copy; <%= new Date().getFullYear() %> - Mi Sitio Web</p>
@@ -129,29 +121,27 @@
 
     <!-- Scripts para formularios -->
     <script>
-        // Login
         document.getElementById('btnLogin').addEventListener('click', function (e) {
             const email = document.getElementById('LoginEmail').value.trim();
-            const contraseña = document.getElementById('LoginPassword').value.trim();
+            const contrasena = document.getElementById('LoginPassword').value.trim();
 
-            if (!email || !contraseña) {
-                e.preventDefault(); // Bloquea envío si hay campos vacíos
+            if (!email || !contrasena) {
+                e.preventDefault();
                 alert('Por favor complete ambos campos.');
             }
         });
 
-        // Registro
         document.getElementById('btnRegister').addEventListener('click', async function (e) {
             e.preventDefault();
 
             const nombre = document.getElementById('RegisterNombre').value.trim();
             const correo = document.getElementById('RegisterEmail').value.trim();
-            const contraseña = document.getElementById('RegisterPassword').value.trim();
+            const contrasena = document.getElementById('RegisterPassword').value.trim();
             const telefono = document.getElementById('RegisterTelefono').value.trim();
             const direccion = document.getElementById('RegisterDireccion').value.trim();
             const rol = document.getElementById('RegisterRol').value;
 
-            if (!nombre || !correo || !contraseña || !telefono || !direccion || !rol) {
+            if (!nombre || !correo || !contrasena || !telefono || !direccion || !rol) {
                 alert('Por favor, complete todos los campos.');
                 return;
             }
@@ -160,7 +150,7 @@
                 const res = await fetch('/auth/registrar', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nombre, correo, contraseña, telefono, direccion, rol })
+                    body: JSON.stringify({ nombre, correo, contrasena, telefono, direccion, rol })
                 });
 
                 const data = await res.json();
@@ -168,6 +158,7 @@
                 if (res.ok) {
                     alert('Registro exitoso. Ahora puede iniciar sesión.');
                     document.getElementById('registerForm').reset();
+                    document.getElementById('login-tab').click(); // Cambia a la pestaña de login
                 } else {
                     alert(data.error || 'Error al registrar.');
                 }
