@@ -4,9 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <%= title || "Repostería" %>
-    </title>
+    <title><%= title || "Repostería" %></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/pasteleria.css">
 </head>
@@ -44,46 +42,44 @@
                         <th>Clasificación</th>
                         <th>Descripción</th>
                         <th>Precio</th>
+                        <th>Cantidad</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <% if (productos.length> 0) { %>
-                        <% productos.forEach(producto=> { %>
+                    <% if (productos.length > 0) { %>
+                        <% productos.forEach(producto => { %>
                             <tr>
-                                <td class="text-center">
-                                    <%= producto.id %>
-                                </td>
-                                <td>
-                                    <%= producto.nombre %>
-                                </td>
-                                <td class="text-center">
-                                    <%= producto.clasificacion %>
-                                </td>
-                                <td>
-                                    <%= producto.descripcion %>
-                                </td>
+                                <td class="text-center"><%= producto.id %></td>
+                                <td><%= producto.nombre %></td>
+                                <td class="text-center"><%= producto.clasificacion %></td>
+                                <td><%= producto.descripcion %></td>
                                 <td class="text-end">
-                                    $<%= parseFloat(producto.precio).toLocaleString('es-CL', { minimumFractionDigits: 0,
-                                        maximumFractionDigits: 0 }) %>
+                                    $<%= parseFloat(producto.precio).toLocaleString('es-CL', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) %>
                                 </td>
+                                <td class="text-center"><%= producto.cantidad %></td>
                                 <td class="text-center">
-                                    <a href="/<%= producto.clasificacion === 'Repostería' ? 'Reposteria' : 'Panaderia' %>/editar/<%= producto.id %>"
-                                        class="btn btn-sm btn-warning">Modificar</a>
-                                    <form
-                                        action="/<%= producto.clasificacion === 'Repostería' ? 'Reposteria' : 'Panaderia' %>/eliminar/<%= producto.id %>"
-                                        method="POST" class="d-inline">
-                                        <button type="submit" class="btn btn-sm btn-danger"
-                                            onclick="return confirm('¿Estás seguro de eliminar este producto?');">Eliminar</button>
+                                    <a href="/<%= producto.clasificacion === 'Repostería' ? 'Reposteria' : 'Panaderia' %>/editar/<%= producto.id %>" class="btn btn-sm btn-warning">Modificar</a>
+                                    <form action="/<%= producto.clasificacion === 'Repostería' ? 'Reposteria' : 'Panaderia' %>/eliminar/<%= producto.id %>" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este producto?');">Eliminar</button>
                                     </form>
+
+                                    <% if (producto.cantidad > 0) { %>
+                                        <form action="/carro/agregar/<%= producto.id %>" method="POST" class="d-inline">
+                                            <input type="hidden" name="cantidad" value="1">
+                                            <button type="submit" class="btn btn-sm btn-success">Comprar</button>
+                                        </form>
+                                    <% } else { %>
+                                        <span class="badge bg-secondary">Sin stock</span>
+                                    <% } %>
                                 </td>
                             </tr>
-                            <% }) %>
-                                <% } else { %>
-                                    <tr>
-                                        <td colspan="6" class="text-center">No hay productos disponibles por ahora.</td>
-                                    </tr>
-                                    <% } %>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="7" class="text-center">No hay productos disponibles por ahora.</td>
+                        </tr>
+                    <% } %>
                 </tbody>
             </table>
         </div>

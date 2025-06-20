@@ -28,6 +28,9 @@ app.use('/Panaderia', productoRoutes);
 const reposteriaRoutes = require('./routes/api/reposteria.routes.js');
 app.use('/Reposteria', reposteriaRoutes);
 
+const carroRoutes = require('./routes/Carro');
+app.use('/Carro', carroRoutes);
+
 const rutas = require('./routes/index.js');
 app.use(rutas);
 

@@ -27,8 +27,9 @@ CREATE TABLE IF NOT EXISTS producto (
     id INT(11) NOT NULL AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL,
     clasificación VARCHAR(50),
-    precio DECIMAL(10,2) NOT NULL DEFAULT 0.00,
     descripcion TEXT,
+    precio DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+    cantidad INT(11) NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
 
@@ -73,5 +74,17 @@ CREATE TABLE IF NOT EXISTS pan (
     precio DECIMAL(10,2) NOT NULL,
     cantidad INT(11) NOT NULL,
     PRIMARY KEY (id),
+    FOREIGN KEY (producto_id) REFERENCES producto(id)
+);
+
+-- Carro table
+CREATE TABLE IF NOT EXISTS carro (
+    id INT(11) NOT NULL AUTO_INCREMENT,
+    cliente_id INT(11) NOT NULL,
+    producto_id INT(11) NOT NULL,
+    cantidad INT(11) NOT NULL,
+    fecha_agregado DATETIME DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    FOREIGN KEY (cliente_id) REFERENCES cliente(id),
     FOREIGN KEY (producto_id) REFERENCES producto(id)
 );

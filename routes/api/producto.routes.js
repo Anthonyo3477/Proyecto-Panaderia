@@ -16,23 +16,22 @@ router.get('/nuevo', (req, res) => {
 // Procesar creación de producto
 router.post('/insert', async (req, res) => {
     try {
-        const { nombre, clasificacion, precio, descripcion } = req.body;
+        const { nombre, clasificacion, precio, descripcion, cantidad } = req.body;
 
-        // Validación de campos
-        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim() || !precio || isNaN(precio)) {
+        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim() || !precio || isNaN(precio) || !cantidad || isNaN(cantidad)) {
             return res.status(400).render('nuevo-producto', {
-                error: 'Todos los campos son obligatorios y el precio debe ser válido',
+                error: 'Todos los campos son obligatorios y deben ser válidos',
                 valores: req.body,
                 categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
             });
         }
 
-        // Inserción en DB
         await productoController.insertProducto({
             nombre: nombre.trim(),
             clasificacion: clasificacion.trim(),
             precio: parseFloat(precio),
-            descripcion: descripcion.trim()
+            descripcion: descripcion.trim(),
+            cantidad: parseInt(cantidad)
         });
 
         res.redirect('/panaderia');
@@ -69,29 +68,29 @@ router.get('/editar/:id', async (req, res) => {
 // Procesar actualización de producto
 router.post('/actualizar/:id', async (req, res) => {
     try {
-        const { nombre, clasificacion, precio, descripcion } = req.body;
+        const { nombre, clasificacion, precio, descripcion, cantidad } = req.body;
 
-        // Validación
-        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim() || !precio || isNaN(precio)) {
+        if (!nombre?.trim() || !clasificacion?.trim() || !descripcion?.trim() || !precio || isNaN(precio) || !cantidad || isNaN(cantidad)) {
             return res.status(400).render('EditarProducto', {
-                error: 'Todos los campos son obligatorios y el precio debe ser válido',
+                error: 'Todos los campos son obligatorios y deben ser válidos',
                 producto: {
                     id: req.params.id,
                     nombre,
                     clasificacion,
                     descripcion,
-                    precio
+                    precio,
+                    cantidad
                 },
                 categorias: ['Pan', 'Torta', 'Pastel', 'Otro']
             });
         }
 
-        // Actualización en DB
         await productoController.updateProducto(req.params.id, {
             nombre: nombre.trim(),
             clasificacion: clasificacion.trim(),
             precio: parseFloat(precio),
-            descripcion: descripcion.trim()
+            descripcion: descripcion.trim(),
+            cantidad: parseInt(cantidad)
         });
 
         res.redirect('/panaderia');
@@ -123,26 +122,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Mostrar detalle de producto
-router.get('/:id', async (req, res) => {
-    try {
-        const producto = await productoController.getProductoById(req.params.id);
-
-        if (!producto) {
-            return res.status(404).render('error', { message: 'Producto no encontrado' });
-        }
-
-        res.render('producto-detalle', {
-            title: producto.nombre,
-            producto
-        });
-    } catch (error) {
-        console.error('Error al obtener producto:', error);
-        res.status(500).render('error', { message: 'Error al cargar el producto' });
-    }
-});
-
-// Procesar eliminación de producto
+// Eliminar producto
 router.post('/eliminar/:id', async (req, res) => {
     try {
         await productoController.deleteProducto(req.params.id);

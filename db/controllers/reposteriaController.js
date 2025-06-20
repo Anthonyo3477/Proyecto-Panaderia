@@ -1,7 +1,6 @@
 const db = require('../Conexion');
 
 module.exports = {
-    // Obtener todos los productos de repostería
     getProductosReposteria: async () => {
         try {
             const [rows] = await db.execute(
@@ -15,7 +14,6 @@ module.exports = {
         }
     },
 
-    // Obtener un producto de repostería por ID
     getProductoReposteriaById: async (id) => {
         try {
             const [rows] = await db.execute(
@@ -29,23 +27,24 @@ module.exports = {
         }
     },
 
-    // Insertar un nuevo producto de repostería
-    insertProductoReposteria: async ({ nombre, descripcion }) => {
+    insertProductoReposteria: async ({ nombre, clasificacion, precio, descripcion, cantidad }) => {
         try {
-            if (!nombre || !descripcion) {
+            if (!nombre || !descripcion || precio == null || cantidad == null) {
                 throw new Error('Faltan campos obligatorios');
             }
 
             const [result] = await db.execute(
-                'INSERT INTO producto (nombre, clasificacion, descripcion) VALUES (?, ?, ?)',
-                [nombre.trim(), 'Repostería', descripcion.trim()]
+                'INSERT INTO producto (nombre, clasificacion, descripcion, precio, cantidad) VALUES (?, ?, ?, ?, ?)',
+                [nombre.trim(), 'Repostería', descripcion.trim(), parseFloat(precio), parseInt(cantidad)]
             );
 
             return {
                 id: result.insertId,
                 nombre: nombre.trim(),
                 clasificacion: 'Repostería',
-                descripcion: descripcion.trim()
+                descripcion: descripcion.trim(),
+                precio: parseFloat(precio),
+                cantidad: parseInt(cantidad)
             };
         } catch (error) {
             console.error('Error en insertProductoReposteria:', error);
@@ -53,10 +52,9 @@ module.exports = {
         }
     },
 
-    // Actualizar un producto de repostería
-    updateProductoReposteria: async (id, { nombre, descripcion }) => {
+    updateProductoReposteria: async (id, { nombre, clasificacion, precio, descripcion, cantidad }) => {
         try {
-            if (!nombre || !descripcion) {
+            if (!nombre || !descripcion || precio == null || cantidad == null) {
                 throw new Error('Faltan campos obligatorios');
             }
 
@@ -70,15 +68,17 @@ module.exports = {
             }
 
             const [result] = await db.execute(
-                'UPDATE producto SET nombre = ?, descripcion = ? WHERE id = ?',
-                [nombre.trim(), descripcion.trim(), id]
+                'UPDATE producto SET nombre = ?, descripcion = ?, precio = ?, cantidad = ? WHERE id = ?',
+                [nombre.trim(), descripcion.trim(), parseFloat(precio), parseInt(cantidad), id]
             );
 
             return {
                 id,
                 nombre: nombre.trim(),
                 clasificacion: 'Repostería',
-                descripcion: descripcion.trim()
+                descripcion: descripcion.trim(),
+                precio: parseFloat(precio),
+                cantidad: parseInt(cantidad)
             };
         } catch (error) {
             console.error('Error en updateProductoReposteria:', error);
@@ -86,7 +86,6 @@ module.exports = {
         }
     },
 
-    // Eliminar un producto de repostería
     deleteProductoReposteria: async (id) => {
         try {
             const [rows] = await db.execute(
