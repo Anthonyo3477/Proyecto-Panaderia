@@ -1,38 +1,37 @@
 const express = require('express');
 const path = require('path');
-const session = require('express-session');  // Importamos express-session
+const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middlewares para interpretar el body antes de las rutas
+// Middleware para interpretar formularios y JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Middleware para archivos estáticos
+// Archivos estáticos
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Configuración de la sesión
+// Configuración de sesiones
 app.use(session({
-    secret: 'unSecretoMuySeguro12345',  // Cambia esto por una cadena segura en producción
+    secret: 'unSecretoMuySeguro12345',
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        maxAge: 1000 * 60 * 60 // 1 hora
-    }
+    cookie: { maxAge: 1000 * 60 * 60 } // 1 hora
 }));
 
-// Logger para depurar body y requests
+// Logger para debug
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
     console.log('Body:', req.body);
+    console.log('Sesión:', req.session);
     next();
 });
 
-// Configuración de EJS
+// Configuración del motor de vistas
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Rutas importadas y declaradas
+// Rutas importadas
 const productoRoutes = require('./routes/api/producto.routes.js');
 app.use('/Panaderia', productoRoutes);
 
@@ -48,21 +47,57 @@ app.use('/auth', authRoutes);
 const rutas = require('./routes/index.js');
 app.use(rutas);
 
-// Rutas principales
+// Ruta raíz redirige a /carro si el usuario está logueado
 app.get('/', (req, res) => {
-    res.render('Index', { title: 'Inicio' });
+    if (req.session.usuario_id) {
+        // Usuario autenticado: renderiza directamente la vista Carro
+        res.render('Carro', {
+            title: 'Carrito de Compras',
+            nombreUsuario: req.session.usuario_nombre,
+            rol: req.session.rol
+        });
+    } else {
+        // Usuario no autenticado: redirige al formulario de login
+        res.redirect('/Login_Registrar');
+    }
 });
 
-app.get('/Carro', (req, res) => {
-    res.render('Carro', { title: 'Carro de Compras' });
+
+// Vista del carro (Carro.ejs)
+app.get('/carro', (req, res) => {
+    if (!req.session.usuario_id) {
+        return res.redirect('/Login_Registrar');
+    }
+
+    res.render('Carro', {
+        title: 'Carrito de Compras',
+        nombreUsuario: req.session.usuario_nombre,
+        rol: req.session.rol
+    });
 });
 
+// Formulario de login y registro
 app.get('/Login_Registrar', (req, res) => {
     res.render('Login_Registrar', { title: 'Iniciar Sesión' });
 });
 
+// Vista para agregar producto (accesible solo como admin si quieres protegerla)
 app.get('/AgregarProducto', (req, res) => {
+    if (req.session.rol !== 'admin') {
+        return res.status(403).send('Acceso denegado');
+    }
+
     res.render('AgregarProducto', { title: 'Registrar Producto' });
+});
+
+// Ruta logout
+app.get('/auth/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).send('Error al cerrar sesión');
+        }
+        res.redirect('/Login_Registrar');
+    });
 });
 
 // Manejo de errores
