@@ -2,27 +2,22 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../../db/controllers/authController.js');
 
-// === Formularios ===
-// Mostrar formulario de login/registro
-router.get('/login', authController.mostrarFormularioLogin);
-
-// === Procesos ===
-// Procesar inicio de sesión
+// Procesar login
 router.post('/login', authController.login);
 
-// Procesar registro de usuario
+// Procesar registro
 router.post('/registrar', authController.registrar);
 
-// === Cierre de sesión ===
-// Cerrar sesión y destruir datos
-router.get('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            console.error('Error al cerrar sesión:', err);
-            return res.status(500).send('Error al cerrar sesión');
-        }
-        res.redirect('/Login_Registrar');
-    });
+// Cerrar sesión
+router.get('/carro', (req, res) => {
+  if (!req.session.usuario_id) {
+    return res.redirect('/Login_Registrar?error=No%20has%20iniciado%20sesión');
+  }
+
+  // Consulta productos del carrito del usuario
+  // (asumiendo que tienes la lógica de obtención en un controlador)
+  productoController.mostrarCarro(req, res);
 });
+
 
 module.exports = router;

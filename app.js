@@ -19,7 +19,7 @@ app.use(session({
     cookie: { maxAge: 1000 * 60 * 60 } // 1 hora
 }));
 
-// Logger para debug
+// Logger para debug - Muestra sesión en cada request
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
     console.log('Body:', req.body);
@@ -31,6 +31,14 @@ app.use((req, res, next) => {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Middleware para proteger rutas que requieren login
+function requireLogin(req, res, next) {
+    if (!req.session.usuario_id) {
+        return res.redirect('/Login_Registrar');
+    }
+    next();
+}
+
 // Rutas importadas
 const productoRoutes = require('./routes/api/producto.routes.js');
 app.use('/Panaderia', productoRoutes);
@@ -39,7 +47,7 @@ const reposteriaRoutes = require('./routes/api/reposteria.routes.js');
 app.use('/Reposteria', reposteriaRoutes);
 
 const carroRoutes = require('./routes/api/carro.routes.js');
-app.use('/carro', carroRoutes);
+app.use('/carro', requireLogin, carroRoutes);
 
 const authRoutes = require('./routes/api/auth.routes.js');
 app.use('/auth', authRoutes);
@@ -50,25 +58,13 @@ app.use(rutas);
 // Ruta raíz redirige a /carro si el usuario está logueado
 app.get('/', (req, res) => {
     if (req.session.usuario_id) {
-        // Usuario autenticado: renderiza directamente la vista Carro
-        res.render('Carro', {
-            title: 'Carrito de Compras',
-            nombreUsuario: req.session.usuario_nombre,
-            rol: req.session.rol
-        });
-    } else {
-        // Usuario no autenticado: redirige al formulario de login
-        res.redirect('/Login_Registrar');
-    }
+        return res.redirect('/carro'); // Mejor redireccionar que renderizar directo
+    } 
+    res.redirect('/Login_Registrar');
 });
 
-
-// Vista del carro (Carro.ejs)
-app.get('/carro', (req, res) => {
-    if (!req.session.usuario_id) {
-        return res.redirect('/Login_Registrar');
-    }
-
+// Vista del carro (protegida con middleware)
+app.get('/carro', requireLogin, (req, res) => {
     res.render('Carro', {
         title: 'Carrito de Compras',
         nombreUsuario: req.session.usuario_nombre,
@@ -81,12 +77,11 @@ app.get('/Login_Registrar', (req, res) => {
     res.render('Login_Registrar', { title: 'Iniciar Sesión' });
 });
 
-// Vista para agregar producto (accesible solo como admin si quieres protegerla)
+// Vista para agregar producto (accesible solo como admin)
 app.get('/AgregarProducto', (req, res) => {
     if (req.session.rol !== 'admin') {
         return res.status(403).send('Acceso denegado');
     }
-
     res.render('AgregarProducto', { title: 'Registrar Producto' });
 });
 
@@ -94,6 +89,7 @@ app.get('/AgregarProducto', (req, res) => {
 app.get('/auth/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
+            console.error('Error al cerrar sesión:', err);
             return res.status(500).send('Error al cerrar sesión');
         }
         res.redirect('/Login_Registrar');
