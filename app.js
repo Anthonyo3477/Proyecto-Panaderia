@@ -39,6 +39,14 @@ function requireLogin(req, res, next) {
     next();
 }
 
+// ✅ Nuevo middleware: solo permite acceso a clientes
+function requireCliente(req, res, next) {
+    if (req.session.usuario_id && req.session.rol === 'cliente') {
+        return next();
+    }
+    return res.redirect('/Login_Registrar');
+}
+
 // Rutas importadas
 const productoRoutes = require('./routes/api/producto.routes.js');
 app.use('/Panaderia', productoRoutes);
@@ -47,7 +55,8 @@ const reposteriaRoutes = require('./routes/api/reposteria.routes.js');
 app.use('/Reposteria', reposteriaRoutes);
 
 const carroRoutes = require('./routes/api/carro.routes.js');
-app.use('/carro', requireLogin, carroRoutes);
+// 🔁 Usamos el nuevo middleware requireCliente
+app.use('/carro', requireCliente, carroRoutes);
 
 const authRoutes = require('./routes/api/auth.routes.js');
 app.use('/auth', authRoutes);
@@ -55,16 +64,20 @@ app.use('/auth', authRoutes);
 const rutas = require('./routes/index.js');
 app.use(rutas);
 
-// Ruta raíz redirige a /carro si el usuario está logueado
+// 🔁 Cambiado: ahora renderiza la página principal, no redirige directo al carro
 app.get('/', (req, res) => {
     if (req.session.usuario_id) {
-        return res.redirect('/carro'); // Mejor redireccionar que renderizar directo
-    } 
+        return res.render('Index', {
+            title: 'Panadería Don Juanito',
+            nombreUsuario: req.session.usuario_nombre,
+            rol: req.session.rol
+        });
+    }
     res.redirect('/Login_Registrar');
 });
 
-// Vista del carro (protegida con middleware)
-app.get('/carro', requireLogin, (req, res) => {
+// Vista del carro (ya protegida con requireCliente)
+app.get('/carro', requireCliente, (req, res) => {
     res.render('Carro', {
         title: 'Carrito de Compras',
         nombreUsuario: req.session.usuario_nombre,
@@ -77,7 +90,7 @@ app.get('/Login_Registrar', (req, res) => {
     res.render('Login_Registrar', { title: 'Iniciar Sesión' });
 });
 
-// Vista para agregar producto (accesible solo como admin)
+// Vista para agregar producto (solo admin)
 app.get('/AgregarProducto', (req, res) => {
     if (req.session.rol !== 'admin') {
         return res.status(403).send('Acceso denegado');
