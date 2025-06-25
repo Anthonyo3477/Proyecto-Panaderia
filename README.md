@@ -11,7 +11,7 @@ como administrativas (registro de productos, Eliminar producto, etc.).
 
 ## 🚀 Tecnologías Utilizadas
 
-- ** Node.js ** – Para la lógica del servidor.
+- ** Node.js** – Para la lógica del servidor.
 - **Desarrollo Web**
 - **Bootstrap** – Framework CSS para diseño responsivo y moderno.
 - **MySQL** – Base de datos para almacenar productos, usuarios, etc.
