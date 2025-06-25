@@ -4,19 +4,22 @@
 }
 
 .bg-brown {
-  background-color: #f8e5b5 !important; /* Amarillo claro para fondo */
+  background-color: #f8e5b5 !important;
+  /* Amarillo claro */
 }
 
 .bg-yellow-strong {
-  background-color: #f7b733 !important; /* Amarillo fuerte como botones */
+  background-color: #f7b733 !important;
+  /* Amarillo fuerte */
 }
 
 .text-white {
   color: white !important;
 }
 
-/* Body */
-html, body {
+/* Body y estructura general */
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -26,19 +29,21 @@ html, body {
   flex-direction: column;
 }
 
-/* El contenido principal se expande para empujar el footer hacia abajo */
+/* El contenido principal se expande para empujar el footer */
 main {
   flex: 1;
 }
 
 /* Títulos */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   color: #5e3200;
 }
 
 /* Navbar */
 .navbar {
-  background-color: #f7b733 !important; /* Amarillo fuerte */
+  background-color: #f7b733 !important;
 }
 
 .navbar-brand {
@@ -56,6 +61,31 @@ h1, h2, h3 {
   color: #5e3200 !important;
 }
 
+/* Tabla */
+.table {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: #5e3200;
+  color: white;
+}
+
+.table tbody tr:hover {
+  background-color: #fff0d9;
+}
+
+/* Botones */
+.btn-danger {
+  background-color: #c0392b;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #a93226;
+}
+
 /* Footer */
 footer {
   background-color: #5e3200 !important;
@@ -65,16 +95,4 @@ footer {
   font-size: 0.95rem;
   border-top: 1px solid #ddd;
   margin-top: auto;
-}
-
-/* Botones personalizados */
-.btn-panaderia {
-  background-color: #f7b733;
-  color: white;
-  border: none;
-}
-
-.btn-panaderia:hover {
-  background-color: #e69500;
-  color: white;
 }

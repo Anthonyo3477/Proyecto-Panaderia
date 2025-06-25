@@ -11,8 +11,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="../public/css/Index.css">
+    <link rel="stylesheet" href="/css/Carro.css">
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-light fixed-top shadow">
@@ -58,10 +59,49 @@
                             <th>Nombre Producto</th>
                             <th>Clasificación</th>
                             <th>Descripción</th>
+                            <th>Precio Unitario</th>
+                            <th>Cantidad</th>
                             <th>Total</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        <% if (carro.length> 0) { %>
+                            <% carro.forEach(item=> { %>
+                                <tr>
+                                    <td>
+                                        <%= item.id %>
+                                    </td>
+                                    <td>
+                                        <%= item.nombre %>
+                                    </td>
+                                    <td>
+                                        <%= item.clasificacion %>
+                                    </td>
+                                    <td>
+                                        <%= item.descripcion %>
+                                    </td>
+                                    <td>$<%= item.precio.toLocaleString('es-CL', { minimumFractionDigits: 0 }) %>
+                                    </td>
+                                    <td>
+                                        <%= item.cantidad %>
+                                    </td>
+                                    <td>$<%= item.total.toLocaleString('es-CL', { minimumFractionDigits: 0 }) %>
+                                    </td>
+                                    <td>
+                                        <form action="/carro/eliminar/<%= item.id %>" method="POST">
+                                            <button type="submit"
+                                                class="btn btn-sm btn-danger eliminar-btn">Eliminar</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% }) %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="8" class="text-center">Tu carrito está vacío</td>
+                                        </tr>
+                                        <% } %>
+                    </tbody>
                 </table>
             </div>
         </div>
