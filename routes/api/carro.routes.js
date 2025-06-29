@@ -84,10 +84,11 @@ router.post('/agregar', verificarSesion, async (req, res) => {
 });
 
 // Eliminar producto del carrito
+// Eliminar producto del carrito
 router.post('/eliminar/:id', verificarSesion, async (req, res) => {
   try {
     const carro_id = req.params.id;
-    const usuario_id = req.session.usuario?.id;
+    const usuario_id = req.session.usuario_id; // ✅ Línea corregida
 
     const [carroItem] = await db.execute(
       'SELECT producto_id, cantidad FROM carro WHERE id = ? AND usuario_id = ?',

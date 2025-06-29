@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
+const flash = require('connect-flash'); // ✅ Agregado
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -19,7 +20,19 @@ app.use(session({
     cookie: { maxAge: 1000 * 60 * 60 } // 1 hora
 }));
 
-// Logger para debug - Muestra sesión en cada request
+// Usar flash
+app.use(flash());
+
+// Middleware para pasar mensajes flash a las vistas
+app.use((req, res, next) => {
+    if (req.query.logout) {
+        res.locals.success_msg = 'Sesión cerrada correctamente';
+    }
+    next();
+});
+
+
+// Logger para debug
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
     console.log('Body:', req.body);
@@ -39,7 +52,7 @@ function requireLogin(req, res, next) {
     next();
 }
 
-// ✅ Nuevo middleware: solo permite acceso a clientes
+// Solo clientes
 function requireCliente(req, res, next) {
     if (req.session.usuario_id && req.session.rol === 'cliente') {
         return next();
@@ -47,7 +60,7 @@ function requireCliente(req, res, next) {
     return res.redirect('/Login_Registrar');
 }
 
-// Rutas importadas
+// Rutas
 const productoRoutes = require('./routes/api/producto.routes.js');
 app.use('/Panaderia', productoRoutes);
 
@@ -55,7 +68,6 @@ const reposteriaRoutes = require('./routes/api/reposteria.routes.js');
 app.use('/Reposteria', reposteriaRoutes);
 
 const carroRoutes = require('./routes/api/carro.routes.js');
-// 🔁 Usamos el nuevo middleware requireCliente
 app.use('/carro', requireCliente, carroRoutes);
 
 const authRoutes = require('./routes/api/auth.routes.js');
@@ -64,19 +76,17 @@ app.use('/auth', authRoutes);
 const rutas = require('./routes/index.js');
 app.use(rutas);
 
-// 🔁 Cambiado: ahora renderiza la página principal, no redirige directo al carro
+// Página principal
 app.get('/', (req, res) => {
-    if (req.session.usuario_id) {
-        return res.render('Index', {
-            title: 'Panadería Don Juanito',
-            nombreUsuario: req.session.usuario_nombre,
-            rol: req.session.rol
-        });
-    }
-    res.redirect('/Login_Registrar');
+    res.render('Index', {
+        title: 'Panadería Don Juanito',
+        nombreUsuario: req.session.usuario_nombre,
+        rol: req.session.rol,
+        success_msg: req.flash('success_msg') // ✅ pasamos el mensaje flash a la vista
+    });
 });
 
-// Vista del carro (ya protegida con requireCliente)
+// Vista carro protegida
 app.get('/carro', requireCliente, (req, res) => {
     res.render('Carro', {
         title: 'Carrito de Compras',
@@ -85,12 +95,12 @@ app.get('/carro', requireCliente, (req, res) => {
     });
 });
 
-// Formulario de login y registro
+// Login y registro
 app.get('/Login_Registrar', (req, res) => {
     res.render('Login_Registrar', { title: 'Iniciar Sesión' });
 });
 
-// Vista para agregar producto (solo admin)
+// Agregar producto solo para admin
 app.get('/AgregarProducto', (req, res) => {
     if (req.session.rol !== 'admin') {
         return res.status(403).send('Acceso denegado');
@@ -98,24 +108,25 @@ app.get('/AgregarProducto', (req, res) => {
     res.render('AgregarProducto', { title: 'Registrar Producto' });
 });
 
-// Ruta logout
+// Ruta logout con mensaje
 app.get('/auth/logout', (req, res) => {
     req.session.destroy(err => {
         if (err) {
             console.error('Error al cerrar sesión:', err);
             return res.status(500).send('Error al cerrar sesión');
         }
-        res.redirect('/Login_Registrar');
+        req.flash('success_msg', 'Sesión cerrada correctamente.');
+        res.redirect('/');
     });
 });
 
-// Manejo de errores
+// Error 500
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send('¡Algo salió mal!');
 });
 
-// Inicio del servidor
+// Iniciar servidor
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
